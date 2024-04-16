@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+C:\Users\legion\Desktop\gestion projets\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2843189997.index
+1548988064.index
+2479854090.index
+1900069200.index
+3928357328.index
+3277111731.index

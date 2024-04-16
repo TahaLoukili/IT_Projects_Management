@@ -1,0 +1,22 @@
+package DataLayer;
+
+import java.util.List;
+
+import Models.Dev;
+import Models.Projet;
+import Models.Service;
+import Models.Tache;
+import Models.Technologie;
+
+public interface InterfaceDevDao {
+	public List<Technologie> getDevTechnologies(int idDev);
+	public List<Dev> getAllDevs();
+	public String getTechByID(int techId);
+	public List<Projet> selectDevProjects(int idDev);
+	public Dev getDevByUsername(String devUsername);
+	public List<Service> getProjectServices(int projectId);
+	public List<Tache> getServiceTaches(int serviceId, int idDev);
+	public void insertDevNotification(List<Integer> idDevs, String message);
+	public Dev getDevByID(int devId);
+	public void updateTacheAvancement(int tacheId, int tacheAvancement);
+}

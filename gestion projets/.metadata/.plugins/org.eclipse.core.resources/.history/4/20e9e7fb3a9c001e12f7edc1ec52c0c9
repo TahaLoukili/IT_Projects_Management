@@ -1,0 +1,96 @@
+package DataLayer;
+
+import java.security.Provider.Service;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ServiceDao implements InterfaceServiceDao {
+
+	
+  DBconnectionDao cnx=new DBconnectionDao();
+	
+	private static final String INSERT_NEW_SERVICE = "insert into services(description,duree) VAlues(?,?)";
+	private static final String INSERT_NEW_TACHE = "insert into taches(idDev,nom,idService,avancement) VAlues(?,?,?,0)";
+	private static final String GET_SERVICE_BY_DESCRIPTION = "select * from services where description=?";
+	private static final String INSERT_NEW_PROJET_SERVICE ="insert into projetServices(idProjet,idService) values(?,?)";
+	
+	public void addProjetService( int idProjet,int idSrvice) {
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW_PROJET_SERVICE)) {
+        
+           
+            statement.setInt(1, idProjet);
+            statement.setInt(2, idSrvice);
+            
+
+            statement.executeUpdate();
+            System.out.println("add ProjetService is running");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions accordingly
+        }
+    }
+	
+	public Models.Service getServiceByDecription( String description) {
+		Models.Service service=new Models.Service();
+		 ResultSet rs = null;
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_SERVICE_BY_DESCRIPTION)) {
+        
+        	statement.setString(1, description);
+
+ 	        rs = statement.executeQuery();
+
+ 	        while (rs.next()) {	        	
+ 	            int id = rs.getInt("id");
+ 	            String desc = rs.getString("description");
+ 	            int duree = rs.getInt("duree");
+ 	            
+ 	            //remplir l'objet projet
+ 	            service.setId(id);
+ 	            service.setDescription(desc);
+ 	           service.setDuree(duree);
+ 	           
+ 	        }
+ 	    } catch (SQLException e) {
+ 	        e.printStackTrace();
+ 	        System.err.println("Error in getServiceByDecription method: " + e.getMessage());
+ 	    } 
+        return service;
+    }
+	
+	public void addTache( int idDev,String nom,int idSrvice) {
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW_TACHE)) {
+        
+           
+            statement.setInt(1, idDev);
+            statement.setString(2, nom);
+            statement.setInt(3, idSrvice);
+            
+
+            statement.executeUpdate();
+            System.out.println("add Tache is running");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions accordingly
+        }
+    }
+	
+	public void aaddService( int duree,String description) {
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW_SERVICE)) {
+        
+            statement.setString(1, description);
+            statement.setInt(2, duree);
+
+            statement.executeUpdate();
+            System.out.println("add service is running");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions accordingly
+        }
+    }
+}

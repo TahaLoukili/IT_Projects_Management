@@ -1,0 +1,79 @@
+package Controllers;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import BusinessLayer.ChefManager;
+import BusinessLayer.DevManager;
+import BusinessLayer.ServiceManager;
+import Models.Chef;
+import Models.Dev;
+import Models.Service;
+import Models.Tache;
+
+/**
+ * Servlet implementation class VoirAvancementServlet
+ */
+
+@WebServlet(name="VoirAvancementServlet",value="/voirAvancementServlet")
+public class VoirAvancementServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       ChefManager chefManager=new ChefManager();
+       ServiceManager serviceManager=new ServiceManager();
+       DevManager devManager=new DevManager();
+    
+    public VoirAvancementServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("voir avancement servlet working");
+		
+
+		int idprojet=Integer.parseInt(request.getParameter("ProjetId")) ;
+		
+		int idChef =Integer.parseInt((request.getParameter("ChefId")));
+		
+		Chef chef=chefManager.getChefById(idChef);
+		
+		
+		List<Tache> listeTaches=serviceManager.getTachesForProject(idprojet);
+		List<Dev> listDevs=new ArrayList<Dev>();
+		List<Service> listServices=new ArrayList<Service>();
+		if(listeTaches!=null) {
+			for (Tache tache: listeTaches) {
+				System.out.println("tache : "+ tache.getNom()+" avancemt :" +tache.getAvancement()+" %");
+				Dev dev=devManager.getDevByID(tache.getIdDev());
+				Service service=serviceManager.getServiceByID(tache.getIdService());
+				listDevs.add(dev);
+				listServices.add(service);
+			}
+		}
+		
+		request.setAttribute("ProjetId", idprojet);
+		request.setAttribute("chef", chef);
+		request.setAttribute("listeTaches", listeTaches);
+		request.setAttribute("listDevs", listDevs);
+		request.setAttribute("listServices", listServices);
+		request.getRequestDispatcher("/WEB-INF/voir-avancement-taches.jsp").forward(request, response);
+	}
+
+}

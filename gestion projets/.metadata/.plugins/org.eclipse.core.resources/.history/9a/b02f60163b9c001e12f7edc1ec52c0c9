@@ -1,0 +1,8 @@
+package BusinessLayer;
+
+public interface InterfaceServiceManager {
+	public void aaddService( int duree,String description) ;
+	public void addTache( int idDev,String nom,int idSrvice);
+	public Models.Service getServiceByDecription( String description) ;
+	public void addProjetService( int idProjet,int idSrvice);
+}

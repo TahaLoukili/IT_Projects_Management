@@ -1,0 +1,78 @@
+package Controllers;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import BusinessLayer.DevManager;
+import BusinessLayer.ProjectManagement;
+import DataLayer.ProjectDao;
+import Models.Dev;
+import Models.Projet;
+import Models.Service;
+import Models.Tache;
+
+
+@WebServlet(name="DevServlet", value="/devServlet")
+public class DevServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	DevManager devManager = new DevManager();
+
+       
+
+    public DevServlet() {
+        super();
+        
+    }
+
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		String devUsername = request.getParameter("usernameDev");
+//		Dev dev = devManager.getDevByUsername(devUsername);
+//		request.setAttribute("dev", dev);
+//		int idDev = Integer.parseInt(request.getParameter("idDev"));
+//		List<Projet> devProjects = devManager.selectDevProjects(idDev);
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		if(request.getParameter("consulterServices") != null) {
+			
+			int idProject = Integer.parseInt(request.getParameter("idProjet"));
+			request.setAttribute("clickedProjectId", idProject);
+			
+			List<Service> services = devManager.getProjectServices(idProject);
+			
+//			System.out.println("******* id project from Dev servlet"+"  "+idProject);
+//			
+			request.getSession().setAttribute("projectServices", services);
+			request.getRequestDispatcher("/WEB-INF/dev-space.jsp").forward(request, response);
+					
+		}
+//		if(request.getParameter("consulterTaches") != null) {
+//			int idService= Integer.parseInt(request.getParameter("idService"));
+//			System.out.println("****** id de service: "+idService);
+//			int devId = Integer.parseInt(request.getParameter("devId"));
+//			List<Tache> serviceTaches = devManager.getServiceTaches(idService, devId);
+//			request.getSession().setAttribute("serviceTaches", serviceTaches);
+//			request.getRequestDispatcher("/WEB-INF/dev-space.jsp").forward(request, response);
+//		}
+		
+		if(request.getParameter("addAvancement") != null) {
+			int percentAvancement = Integer.parseInt(request.getParameter("percentAvancement"));
+			int tacheId = Integer.parseInt(request.getParameter("tacheId"));
+			devManager.updateTacheAvancement(tacheId, percentAvancement);
+			request.getRequestDispatcher("/WEB-INF/dev-space.jsp").forward(request, response);
+			System.out.println("******** le pourcentage d'avancement de le tache "+ tacheId  +percentAvancement);
+		}
+		
+		System.out.println("******* DoPost of DevServlet");
+	}
+
+}

@@ -1,0 +1,91 @@
+<%@page import="Models.User"%>
+<%@page import="Models.Projet"%>
+<%@page import="java.util.List"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- header import -->
+<%
+User user = (User) session.getAttribute("user");
+if(user != null){ %>
+
+<div id="directorProjects">
+<jsp:include page="header.jsp" />
+<jsp:include page="sidebar.jsp" />
+
+
+
+
+<%-- <h1>Welcome <%=user.getUsername()%> to Director space</h1>
+ --%>
+
+ 
+         
+
+
+<ul class="bg-white shadow overflow-hidden sm:rounded-md max-w-full mx-auto mt-16 p-4" style="width: 900px;">
+    <%
+    List<Projet> projects = (List<Projet>) request.getAttribute("projects");
+    if (projects != null) {
+        for (Projet project : projects) {
+	%>
+            <li>
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900"><%= project.getNom() %></h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500"><%= project.getDescription() %></p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                    <div class="grid-row">
+                        <p class="text-sm font-medium text-gray-500">Date démarrage: <div class="text-green-500 text-sm"><%= project.getDateDemarage() %></div></p>
+                        <p class="text-sm font-medium text-gray-500">Date livraison: <div class="text-green-500 text-sm"><%= project.getDateLivraison() %></div></p>
+                    </div>
+                    <div>
+	                    <%-- <div><a href="editProject?id=<c:out value='${project.getId()}' />" class="font-medium text-indigo-600 hover:text-indigo-500">Edit</a></div> --%>
+		                    <div><a href="editProject?id=<%= project.getId() %>" name="editProject" class="font-medium text-indigo-600 hover:text-indigo-500">Edit</a></div>
+		                    <div><a href="deleteProject?id=<%= project.getId() %>" name="deleteProject"class="font-medium text-red-600 hover:text-red-500">Delete</a></div>
+                    </div>
+                    </div>
+                </div>
+            </li>
+<%
+        }
+    } else { %>
+        <!-- Handle case where projects are null or empty -->
+    	<h1>No Projects</h1>
+ <%  }
+%>
+    
+   
+</ul>
+
+</div>
+
+<%}else{ %>
+<h1>You have to Sign in</h1>
+<%} %>
+<script>
+        // Trigger an immediate request to fetch director projects
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() { 
+            if (this.readyState == 4 && this.status == 200) {
+                // Handle the response and update the HTML content with projects
+                document.getElementById("directorProjects").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "DirectorServlet", true);
+        xhttp.send();
+</script>
+</body>
+</html>

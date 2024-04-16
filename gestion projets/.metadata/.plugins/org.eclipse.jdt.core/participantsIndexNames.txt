@@ -1,0 +1,5 @@
+INDEX VERSION 1.134
+C:\Users\legion\Desktop\gestion projets\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1900069200.index
+\Gestionprojects\src\main\java
+C:\Users\legion\Desktop\gestion projets\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\692451097.index
+\Gestionprojects\src\main\java

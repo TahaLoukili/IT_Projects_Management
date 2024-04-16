@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>Gestion_projets</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>login.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+  
+  <!-- loginServlet -->
+  <servlet>
+	 <servlet-name>LoginServlet</servlet-name>
+	 <servlet-class>Controllers.LoginServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ 	<servlet-name>LoginServlet</servlet-name> 
+ 	<url-pattern>/login</url-pattern>
+ </servlet-mapping>
+  
+  <!-- <servlet>
+	 <servlet-name>ChefServlet</servlet-name>
+	 <servlet-class>Controllers.ChefServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ 	<servlet-name>ChefServlet</servlet-name> 
+ 	<url-pattern>/chefServlet</url-pattern>
+ </servlet-mapping> -->
+ 
+<!--  <servlet> 
+	 <servlet-name>DirectorServlet</servlet-name>
+	 <servlet-class>Controllers.DirectorServlet</servlet-class>
+ </servlet>
+ <servlet-mapping> 
+ 	<servlet-name>DirectorServlet</servlet-name>
+ 	<url-pattern>/director</url-pattern>
+ </servlet-mapping> -->
+ 
+ 
+ 
+ 
+<servlet> 
+	 <servlet-name>CreerEquipeServlet</servlet-name>
+	 <servlet-class>Controllers.CreerEquipeServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ 	<servlet-name>CreerEquipeServlet</servlet-name>
+ 	<url-pattern>/creerEquipeServlet</url-pattern>
+ </servlet-mapping> 
+ 
+ 
+ 
+ 
+ 
+ <servlet> 
+	 <servlet-name>EditProjectServlet</servlet-name>
+	 <servlet-class>Controllers.EditProjectServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ 	<servlet-name>EditProjectServlet</servlet-name>
+ 	<url-pattern>/editproject</url-pattern>
+ </servlet-mapping>
+ 
+ <servlet> 
+	 <servlet-name>AjouterDateReunionServlet</servlet-name>
+	 <servlet-class>Controllers.AjouterDateReunionServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ 	<servlet-name>AjouterDateReunionServlet</servlet-name>
+ 	<url-pattern>/ajouterDateReunionServlet</url-pattern>
+ </servlet-mapping>
+ 
+ 
+ 
+ 
+</web-app>

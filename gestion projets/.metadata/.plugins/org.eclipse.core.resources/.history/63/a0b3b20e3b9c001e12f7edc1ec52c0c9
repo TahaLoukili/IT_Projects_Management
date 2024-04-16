@@ -1,0 +1,22 @@
+package BusinessLayer;
+
+import DataLayer.ServiceDao;
+
+public class ServiceManager implements InterfaceServiceManager {
+	ServiceDao serviceDao=new ServiceDao();
+	public void aaddService( int duree,String description) {
+		serviceDao.aaddService(duree, description);
+		
+	}
+	public void addTache( int idDev,String nom,int idSrvice) {
+		serviceDao.addTache(idDev, nom, idSrvice);
+		
+	}
+	public Models.Service getServiceByDecription( String description) {
+		return serviceDao.getServiceByDecription(description);
+	}
+	public void addProjetService( int idProjet,int idSrvice) {
+		serviceDao.addProjetService(idProjet, idSrvice);
+		
+	}
+}

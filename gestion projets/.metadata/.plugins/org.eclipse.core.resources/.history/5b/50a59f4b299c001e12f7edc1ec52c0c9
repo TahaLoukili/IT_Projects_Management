@@ -1,0 +1,62 @@
+package BusinessLayer;
+
+import java.util.List;
+
+import DataLayer.DevDao;
+import Models.Dev;
+import Models.Projet;
+import Models.Service;
+import Models.Tache;
+import Models.Technologie;
+
+public class DevManager implements InterfaceDevManager{
+     
+	
+	DevDao devDao=new DevDao();
+	@Override
+	public List<Technologie> getDevTechnologies(int idDev) {
+		// TODO Auto-generated method stub
+		return devDao.getDevTechnologies(idDev);
+	}
+
+	@Override
+	public List<Dev> getAllDevs() {
+		// TODO Auto-generated method stub
+		return devDao.getAllDevs();
+	}
+
+	@Override
+	public String getTechByID(int techId) {
+		// TODO Auto-generated method stub
+		return devDao.getTechByID(techId);
+	}
+	
+	public List<Projet> selectDevProjects(int idDev){
+		return devDao.selectDevProjects(idDev);
+	}
+	
+	public Dev getDevByUsername(String devUsername) {
+		return devDao.getDevByUsername(devUsername);
+	}
+	
+	public List<Service> getProjectServices(int projectId) {
+		return devDao.getProjectServices(projectId);
+	}
+	
+	public List<Tache> getServiceTaches(int serviceId, int idDev){
+		return devDao.getServiceTaches(serviceId, idDev);
+	}
+	
+	public void insertDevNotification(List<Integer> idDevs, String message) {
+		devDao.insertDevNotification(idDevs, message);
+		
+	}
+	public Dev getDevByID(int devId) {
+		return devDao.getDevByID(devId);
+	}
+	
+	
+	
+	
+	
+}

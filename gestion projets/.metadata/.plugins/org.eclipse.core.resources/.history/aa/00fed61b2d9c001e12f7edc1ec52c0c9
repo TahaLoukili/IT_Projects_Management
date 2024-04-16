@@ -1,0 +1,419 @@
+package DataLayer;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import Models.Chef;
+import Models.Client;
+import Models.Dev;
+import Models.Methodologie;
+import Models.Projet;
+import Models.Service;
+import Models.Tache;
+import Models.Technologie;
+
+public class DevDao implements InterfaceDevDao{
+	
+DBconnectionDao cnx=new DBconnectionDao();
+	
+	private static final String GET_ALL_DEVS = "select * from devs";
+	private static final String GET_DEV_BY_ID = "select * from devs where id=?";
+	private static final String GET_DEV_TECHS = "select idTech from devTech where idDev=?";
+	private static final String GET_TECH_BY_ID="Select nom from technologies where id=?";
+	private static final String GET_DEV_PROJECTS="select * from projets where id in (select idProjet from equipes where id in (select idEquipe from membresEquipe where idDev = ? ))";
+	private static final String GET_DEV_BY_USERNAME = "select * from devs where username=?";
+	private static final String GET_PROJECT_SERVICES = "select * from services where id in (select idService from projetServices where idProjet = ?)";
+	private static final String GET_SERVICE_TACHES_FOR_DEV = "select * from taches where idService = ? and idDev = ? ";
+	private static final String GET_SERVICE_TACHES = "select * from taches where idService = ?";
+	private static final String INSERT_DEV_NOTIFICATION="insert into notificationDev(idDev,message,viewed) VALUES (?,?,0) ";
+	private static final String UPDATE_TACHE_AVANCEMENT = "update taches set avancement = ? where id = ?";
+	
+	public void updateTacheAvancement(int tacheId, int tacheAvancement) {
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_TACHE_AVANCEMENT)) {
+        	statement.setInt(1, tacheAvancement);
+        	statement.setInt(2, tacheId);
+        	
+
+            statement.executeUpdate();
+            System.out.println("Delete project by id is running");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions accordingly
+        }
+    }
+	
+	
+
+	public Dev getDevByID(int devId) {
+		Dev dev=new Dev();
+		Connection connection=null;
+		PreparedStatement statement=null;
+		ResultSet rs=null;
+		try {
+			connection =cnx.getConnection();
+			statement=connection.prepareStatement(GET_DEV_BY_ID);
+			statement.setInt(1, devId);
+			rs=statement.executeQuery();
+			while (rs.next()) {	
+			
+		     String nom=rs.getString("username");
+		     int id=rs.getInt("id");
+		     dev.setId(id);
+		     dev.setUsername(nom);
+			}
+			
+			System.out.println("get getTechByID is working");
+		}catch (Exception e) {
+			 e.printStackTrace();
+		        System.err.println("Error in getTechByID method: " + e.getMessage());
+		}finally {
+			cnx.close(connection, statement, rs);
+		}
+		
+		return dev;
+		
+	}
+	
+	public void insertDevNotification(List<Integer> idDevs, String message) {
+        try (Connection connection = cnx.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DEV_NOTIFICATION)) {
+
+            for (int idDev : idDevs) {
+                preparedStatement.setInt(1, idDev);
+                preparedStatement.setString(2, message);
+                preparedStatement.addBatch(); // Add the statement to the batch
+            }
+
+            preparedStatement.executeBatch(); // Execute the batch of insertions
+
+            System.out.println("Notifications inserted successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception according to your needs
+        }
+    }
+	
+public List<Tache> getServiceTaches(int serviceId, int idDev) {
+		
+		List<Tache> serviceTaches = new ArrayList<Tache>();
+		
+		Connection connection=null;
+		PreparedStatement statement=null;
+		ResultSet rs=null;
+		try {
+			connection =cnx.getConnection();
+			statement=connection.prepareStatement(GET_SERVICE_TACHES_FOR_DEV);
+			statement.setInt(1, serviceId);
+			statement.setInt(2, idDev);
+			rs=statement.executeQuery();
+			while (rs.next()) {	
+			
+			int id =rs.getInt("id");
+			int idService= rs.getInt("idService");
+			String nom =rs.getString("nom");
+			int avancement = rs.getInt("avancement");
+			
+			Tache tache = new Tache();
+			 tache.setId(idService);
+			 tache.setIdService(idService);
+			 tache.setNom(nom);
+			 tache.setAvancement(avancement);
+			 
+			 serviceTaches.add(tache);
+			
+			
+			}
+			
+			System.out.println("get getTechByID is working");
+		}catch (Exception e) {
+			 e.printStackTrace();
+		        System.err.println("Error in getTechByID method: " + e.getMessage());
+		}finally {
+			cnx.close(connection, statement, rs);
+		}
+		
+		return serviceTaches;
+		
+	}
+
+public List<Tache> getTachesOfService(int serviceId) {
+	
+	List<Tache> serviceTaches = new ArrayList<Tache>();
+	
+	Connection connection=null;
+	PreparedStatement statement=null;
+	ResultSet rs=null;
+	try {
+		connection =cnx.getConnection();
+		statement=connection.prepareStatement(GET_SERVICE_TACHES);
+		statement.setInt(1, serviceId);
+		rs=statement.executeQuery();
+		while (rs.next()) {	
+		
+		int id =rs.getInt("id");
+		int idDev =rs.getInt("idDev");
+		int idService= rs.getInt("idService");
+		String nom =rs.getString("nom");
+		int avancement = rs.getInt("avancement");
+		
+		Tache tache = new Tache();
+		 tache.setId(idService);
+		 tache.setIdService(idService);
+		 tache.setNom(nom);
+		 tache.setAvancement(avancement);
+		 
+		 serviceTaches.add(tache);
+		
+		
+		}
+		
+		System.out.println("get getTechByID is working");
+	}catch (Exception e) {
+		 e.printStackTrace();
+	        System.err.println("Error in getTechByID method: " + e.getMessage());
+	}finally {
+		cnx.close(connection, statement, rs);
+	}
+	
+	return serviceTaches;
+	
+}
+
+	
+	
+	public List<Service> getProjectServices(int projectId) {
+		
+		List<Service> projectServices = new ArrayList<Service>();
+		
+		Connection connection=null;
+		PreparedStatement statement=null;
+		ResultSet rs=null;
+		try {
+			connection =cnx.getConnection();
+			statement=connection.prepareStatement(GET_PROJECT_SERVICES);
+			statement.setInt(1, projectId);
+			rs=statement.executeQuery();
+			while (rs.next()) {	
+			
+			int id =rs.getInt("id");
+			String description =rs.getString("description");
+			int duree = rs.getInt("duree");
+			
+			Service service = new Service();
+			service.setId(id);
+			service.setDescription(description);
+			service.setDuree(duree);
+			
+			List<Tache> serviceTaches
+			service.setTaches(null);
+			
+			projectServices.add(service);
+			}
+			
+			System.out.println("get getTechByID is working");
+		}catch (Exception e) {
+			 e.printStackTrace();
+		        System.err.println("Error in getTechByID method: " + e.getMessage());
+		}finally {
+			cnx.close(connection, statement, rs);
+		}
+		
+		return projectServices;
+		
+	}
+	
+	
+	public List<Projet> selectDevProjects(int idDev) {
+		List<Projet> devProjets = new ArrayList<Projet>();
+	    
+	    Connection connection = null;
+	    PreparedStatement preparedStatement = null;
+	    ResultSet rs = null;
+
+	    try {
+	        connection = cnx.getConnection();
+	        preparedStatement = connection.prepareStatement(GET_DEV_PROJECTS);
+	        preparedStatement.setInt(1, idDev);
+
+	        rs = preparedStatement.executeQuery();
+
+	        while (rs.next()) {
+	        	
+	            int project_id = rs.getInt("id");
+	            String nom = rs.getString("nom");
+	            String description = rs.getString("description");
+	            Date dateDemarrage = rs.getDate("dateDemarage");
+	            Date dateLivraison = rs.getDate("dateLivraison");
+	            Date dateReunion = rs.getDate("dateReunion");
+	            int nbrJourDev = rs.getInt("nbrJourDev");
+	            
+	            Projet project = new Projet();
+	            
+	            
+	            
+	            //remplir l'objet projet
+	            project.setId(project_id);
+	            project.setNom(nom);
+	            project.setDescription(description);
+	            project.setDateDemarage(dateDemarrage);
+	            project.setDateLivraison(dateLivraison);
+	            project.setDateReunion(dateReunion);
+	            project.setNbrJourDev(nbrJourDev);
+	            
+	            devProjets.add(project);
+	            System.out.println(project.getNom());
+	        }
+	    } catch (SQLException e) {
+	        // Log the exception details
+	        e.printStackTrace();
+	        System.err.println("Error in selectProjectById method: " + e.getMessage());
+	    } finally {
+	        // Close resources in the finally block to ensure they're always closed
+	    	cnx.close(connection, preparedStatement, rs);
+	    }
+	    return devProjets;
+	}
+	
+	
+	public Dev getDevByUsername(String devUsername) {
+		Dev dev = new Dev();
+	    
+	    Connection connection = null;
+	    PreparedStatement preparedStatement = null;
+	    ResultSet rs = null;
+
+	    try {
+	        connection = cnx.getConnection();
+	        preparedStatement = connection.prepareStatement(GET_DEV_BY_USERNAME);
+	        preparedStatement.setString(1, devUsername);
+
+	        rs = preparedStatement.executeQuery();
+
+	        while (rs.next()) {
+	        	
+	            int id = rs.getInt("id");
+	            String username = rs.getString("username");
+	            
+	            
+	            //remplir l'objet projet
+	            dev.setId(id);
+	            dev.setUsername(username);
+	            
+	            System.out.println("dao*********** "+dev.getId()+" "+dev.getUsername());
+	            
+	        }
+	    } catch (SQLException e) {
+	        // Log the exception details
+	        e.printStackTrace();
+	        System.err.println("Error in selectProjectById method: " + e.getMessage());
+	    } finally {
+	        // Close resources in the finally block to ensure they're always closed
+	    	cnx.close(connection, preparedStatement, rs);
+	    }
+	    return dev;
+	}
+	
+	
+	
+	
+	public String getTechByID(int techId) {
+		String techanme=null;
+		Connection connection=null;
+		PreparedStatement statement=null;
+		ResultSet rs=null;
+		try {
+			connection =cnx.getConnection();
+			statement=connection.prepareStatement(GET_TECH_BY_ID);
+			statement.setInt(1, techId);
+			rs=statement.executeQuery();
+			while (rs.next()) {	
+			
+			techanme=rs.getString("nom");
+			}
+			
+			System.out.println("get getTechByID is working");
+		}catch (Exception e) {
+			 e.printStackTrace();
+		        System.err.println("Error in getTechByID method: " + e.getMessage());
+		}finally {
+			cnx.close(connection, statement, rs);
+		}
+		
+		return techanme;
+		
+	}
+	
+	
+	public List<Technologie> getDevTechnologies(int idDev){
+		List<Technologie> techs=new ArrayList<Technologie>();
+		Connection connection=null;
+		PreparedStatement statement=null;
+		ResultSet rs=null;
+		try {
+			connection =cnx.getConnection();
+			statement=connection.prepareStatement(GET_DEV_TECHS);
+			statement.setInt(1, idDev);
+			
+			rs=statement.executeQuery();
+			 while (rs.next()) {	  
+			
+			int techId=rs.getInt("idTech");
+			String nom=getTechByID(techId);
+			Technologie tech=new Technologie(techId, nom);
+			techs.add(tech);
+					
+			 }
+			System.out.println("get dev technologies is working");
+		}catch (Exception e) {
+			 e.printStackTrace();
+		        System.err.println("Error in get devs tech method: " + e.getMessage());
+		}finally {
+			cnx.close(connection, statement, rs);
+		}
+		
+		return techs;
+		
+		
+	}
+	
+	public List<Dev> getAllDevs(){
+		
+			
+		    List<Dev> devs = new ArrayList<Dev>();
+		    Connection connection = null;
+		    PreparedStatement preparedStatement = null;
+		    ResultSet rs = null;
+	    try {
+	        connection = cnx.getConnection();
+	        preparedStatement = connection.prepareStatement(GET_ALL_DEVS);
+
+	        rs = preparedStatement.executeQuery();
+
+	        while (rs.next()) {	        	
+	            int id = rs.getInt("id");
+	            String username=rs.getString("username");
+	            List<Technologie> devTechs=getDevTechnologies(id);
+	            Dev dev=new Dev(id, username, devTechs);
+	            devs.add(dev);
+	            
+	            
+	        }
+	        System.out.println("get all devs is working");
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        System.err.println("Error in getall devs method: " + e.getMessage());
+	    } finally {
+	    	cnx.close(connection, preparedStatement, rs);
+	    }
+	    return devs;
+	}
+		
+		
+	
+
+}
